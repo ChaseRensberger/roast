@@ -61,6 +61,14 @@
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background font-sans text-foreground antialiased; }
   button { @apply cursor-pointer; }
+  button:disabled { @apply cursor-not-allowed; }
+  button:focus-visible, summary:focus-visible, a:focus-visible { @apply outline-2 outline-offset-4 outline-ring; }
+}
+
+@layer components {
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-[.16em] text-primary; }
+  .field-label { @apply mb-2 block text-sm font-semibold; }
+  .field { @apply min-h-11 w-full rounded-xl border bg-background px-3 py-2 text-base outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50; }
 }
 
 @keyframes rise-in { from { opacity: 0; transform: translateY(14px); } }
@@ -70,5 +78,5 @@
 .steam { animation: steam 2.8s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }

@@ -8,8 +8,8 @@
 
 ## Non-goals
 
-- No backend, database, authentication, inventory system, or real payment processing.
-- No persistence across page reloads.
+- No backend, server database, authentication, inventory system, or real payment processing.
+- No server-side persistence or sync across devices.
 - No changes to the supplied menu, prices, tax rate, or pickup copy unless requested later.
 
 ## Scope
@@ -18,7 +18,13 @@
 - A drink dialog with size, milk, espresso, syrup, and serving/ice choices.
 - Conditional modifiers matching the source: espresso and cold brew omit milk; non-coffee drinks omit espresso; cold drinks expose ice rather than serving temperature.
 - A right-side cart sheet with line-item quantity controls, removal, 8.75% tax, and total.
-- A simulated payment action that clears the cart and shows a randomized pickup name and ticket.
+- A checkout review with a customer-entered pickup name, ASAP or scheduled pickup, and simulated submission.
+- Persistent carts, favorites, pickup names, and order history in browser IndexedDB, with migration from local storage.
+- Transactional shared-state updates, atomic checkout, and conflict detection for stale cart edits.
+- Editable cart items, removal with Undo, and a sticky mobile cart bar.
+- Order tracking through Received, Preparing, Ready, and Collected, with downloadable text receipts.
+- A local barista view with cross-tab status updates and automatic order progression.
+- Shop details, San Francisco opening hours, and illustrative availability states.
 
 ## Key Requirements
 
@@ -36,6 +42,6 @@
 
 ## Future Considerations
 
-- Add local storage if a retained cart is needed.
+- Browser storage retains the cart and demo orders; a backend is still required for cross-device use.
 - Replace fixed menu data with a menu API when a backend exists.
 - Integrate payment and order submission only after defining checkout, inventory, and fulfillment requirements.

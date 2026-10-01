@@ -1,34 +1,50 @@
-# React + TypeScript + Vite
+# Roast
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Roast is a coffee-ordering demo built with React, TypeScript, Vite, Tailwind CSS, and shadcn/ui.
+All orders and payments are simulated. The app has no backend, accounts, or payment service.
+Shop details and availability are illustrative.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Install dependencies with `bun install`.
+Start the app with `bun run dev`.
+Vite prints the local address in the terminal.
 
-## React Compiler
+## Demo flow
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+1. Choose a drink and customize its size, milk, and extras.
+2. Add the drink to your cart. Edit it or remove it with an Undo action.
+3. Continue to checkout and enter a pickup name.
+4. Choose ASAP or a scheduled pickup time. Scheduled times use San Francisco time.
+5. Place the demo order and follow its status.
+6. Open Barista view from the footer to advance the order manually.
 
-Note: This will impact Vite dev & build performances.
+ASAP orders enter Preparing after 15 seconds and become Ready after six minutes.
+Scheduled orders enter Preparing six minutes before pickup and become Ready at pickup time.
+ASAP checkout stays available when the shop is closed so the demo works at any time.
+Scheduled pickup stays within the displayed shop hours.
 
-## Expanding the Oxlint configuration
+The cart, favorites, pickup name, and order history persist in IndexedDB, the database built into the current browser.
+The app imports existing local-storage data on its first database initialization.
+Tabs on the same origin share this data. Separate browsers and devices do not.
+Database transactions keep concurrent tab updates from overwriting each other.
+Checkout saves its order and clears its cart in one transaction.
+If browser storage fails, the app shows a warning and runs only in the current session without shared writes.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+For a two-sided demo, open `/#barista` in a second tab on the same origin.
+Place an order in the customer tab, then change its status in the barista tab.
+Customers can view and download a text receipt from the order tracker.
+If another tab changes or removes a drink during an edit, saving shows a conflict message.
+Return to the cart and reopen the drink to edit its current state.
+Order IDs work on localhost, HTTPS, and plain HTTP addresses on a local network.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+## Code structure
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+- `src/lib/` contains menu data, pricing, order timing, shop hours, receipts, stored-data validation, and database transactions.
+- `src/hooks/` contains browser persistence, cart and order actions, and the customer/barista view switch.
+- `src/components/` separates drinks, cart, checkout, orders, shop details, layout, and the barista view.
+- `src/App.tsx` connects the feature components and controls overlays.
+- `tests/domain.test.ts` covers pricing, cart merging, order timing, receipts, scheduling, and stored-data validation.
+- `tests/shared-state.test.ts` covers concurrent updates, atomic checkout, stale edits, migration, and HTTP-safe order IDs.
+
+Run `bun test` for tests, `bun run build` for a production build, and `bun run lint` for lint checks.

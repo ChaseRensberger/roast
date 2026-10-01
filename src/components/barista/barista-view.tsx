@@ -1,0 +1,14 @@
+import { CoffeeIcon } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { optionSummary } from '@/lib/menu'
+import { statusLabels, timeLabel, type Order, type OrderStatus } from '@/lib/orders'
+
+type Props = { orders: Order[]; onStatus: (id: string, status: OrderStatus) => void; onBack: () => void }
+export function BaristaView({ orders, onStatus, onBack }: Props) {
+  const active = [...orders].reverse().filter((order) => order.status !== 'collected')
+  return <section className="mx-auto max-w-300 px-5 py-10 sm:px-8"><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="eyebrow">Behind the counter · demo</p><h1 className="mt-3 font-heading text-4xl">Let’s get brewing.</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{active.length} active {active.length === 1 ? 'ticket' : 'tickets'}. Status changes sync with the customer view, including other tabs in this browser. Orders also progress automatically.</p></div><Button variant="outline" onClick={onBack}>Back to ordering</Button></div>
+    {!active.length ? <div className="rounded-3xl border border-dashed p-12 text-center"><CoffeeIcon className="mx-auto mb-4 size-10 text-primary" /><h2 className="font-heading text-xl">A quiet moment.</h2><p className="mt-2 text-sm text-muted-foreground">Place a demo order from the menu to see its ticket here.</p><Button className="mt-5" onClick={onBack}>Place a demo order</Button></div> : <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{active.map((order) => <article key={order.id} className="flex flex-col rounded-3xl border bg-popover p-6 shadow-sm"><div className="flex flex-wrap justify-between gap-2"><span className="font-mono text-sm font-bold">{order.ticket}</span><Badge variant="secondary">{statusLabels[order.status]}</Badge></div><h2 className="mt-3 font-heading text-2xl">{order.name}</h2><p className="mt-1 text-xs text-muted-foreground">{order.scheduled ? 'Scheduled' : 'ASAP'} · pickup {timeLabel(order.pickupAt)}</p><ul className="my-5 flex-1 space-y-4 border-y py-4">{order.items.map((item) => <li key={item.key}><p className="text-sm font-bold">{item.quantity} × {item.drink.name}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{optionSummary(item.drink, item.options)}</p></li>)}</ul><Button onClick={() => onStatus(order.id, order.status === 'received' ? 'preparing' : order.status === 'preparing' ? 'ready' : 'collected')}>{order.status === 'received' ? 'Start preparing' : order.status === 'preparing' ? 'Mark ready for pickup' : 'Mark collected'}</Button></article>)}</div>}
+    <p className="mt-8 text-xs text-muted-foreground">Local demo only · no real staff, payments, or fulfillment service connected.</p>
+  </section>
+}
